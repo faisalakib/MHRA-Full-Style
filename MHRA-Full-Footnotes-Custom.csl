@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0"
+       class="note" default-locale="en-GB"
+       demote-non-dropping-particle="display-and-sort"
+       initialize-with=". " page-range-format="minimal-two">
+
+  <info>
+    <title>MHRA Full Footnotes (Custom)</title>
+    <title-short>MHRA Full Notes</title-short>
+    <id>http://www.zotero.org/styles/mhra-full-footnotes-custom</id>
+    <link href="http://www.zotero.org/styles/mhra-full-footnotes-custom" rel="self"/>
+    <link href="https://www.mhra.org.uk/style/" rel="documentation"/>
+    <author>
+      <name>Custom modification based on MHRA Style Guide 4th edition (notes)</name>
+    </author>
+    <category citation-format="note"/>
+    <category field="generic-base"/>
+    <summary>Custom MHRA notes style that always renders a full bibliographic footnote; locators remain citation-specific.</summary>
+    <updated>2026-10-02T00:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/"/>
+  </info>
+
+  <locale xml:lang="en">
+    <terms>
+      <term name="et-al">and others</term>
+      <term name="page" form="short">p.</term>
+      <term name="page" form="short" plural="true">pp.</term>
+      <term name="chapter" form="short">chap.</term>
+      <term name="volume" form="short">vol.</term>
+      <term name="issue" form="short">no.</term>
+      <term name="edition" form="short">edn</term>
+      <term name="editor" form="short">ed.</term>
+      <term name="editor" form="verb-short">edited by</term>
+      <term name="translator" form="verb-short">translated by</term>
+      <term name="in">in</term>
+      <term name="accessed">accessed</term>
+    </terms>
+  </locale>
+
+  <!-- Authors: full names in every footnote. -->
+  <macro name="author-note">
+    <names variable="author">
+      <name and="text" delimiter=", " delimiter-precedes-last="always"
+            initialize="false" name-as-sort-order="none"/>
+      <substitute>
+        <names variable="editor">
+          <name and="text" delimiter=", " delimiter-precedes-last="always"
+                initialize="false" name-as-sort-order="none"/>
+          <label form="short" prefix=", "/>
+        </names>
+        <text variable="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="author-bib">
+    <names variable="author">
+      <name and="text" delimiter=", " delimiter-precedes-last="always"
+            initialize="false" name-as-sort-order="all"/>
+      <substitute>
+        <names variable="editor">
+          <name and="text" delimiter=", " delimiter-precedes-last="always"
+                initialize="false" name-as-sort-order="all"/>
+          <label form="short" prefix=", "/>
+        </names>
+        <text variable="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number variable="edition" form="ordinal"/>
+          <label variable="edition" form="short"/>
+        </group>
+      </if>
+      <else-if variable="edition">
+        <text variable="edition"/>
+      </else-if>
+    </choose>
+  </macro>
+
+  <macro name="publisher-date">
+    <group delimiter=", " prefix="(" suffix=")">
+      <text variable="publisher"/>
+      <date variable="issued" form="text">
+        <date-part name="year"/>
+      </date>
+    </group>
+  </macro>
+
+  <macro name="book-source">
+    <group delimiter=", ">
+      <text macro="edition"/>
+      <text macro="publisher-date"/>
+    </group>
+  </macro>
+
+  <macro name="locator">
+    <choose>
+      <if variable="locator">
+        <group delimiter=" ">
+          <label variable="locator" form="short"/>
+          <text variable="locator"/>
+        </group>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="access">
+    <choose>
+      <if variable="DOI">
+        <text variable="DOI" prefix="doi:"/>
+      </if>
+      <else-if variable="URL">
+        <group delimiter=" ">
+          <text variable="URL" prefix="&lt;" suffix="&gt;"/>
+          <group prefix="[" suffix="]" delimiter=" ">
+            <text term="accessed"/>
+            <date variable="accessed" form="text"/>
+          </group>
+        </group>
+      </else-if>
+    </choose>
+  </macro>
+
+  <macro name="title">
+    <choose>
+      <if type="article-journal article-magazine article-newspaper chapter paper-conference review review-book webpage post-weblog">
+        <text variable="title" quotes="true"/>
+      </if>
+      <else>
+        <text variable="title" font-style="italic"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="container-title">
+    <choose>
+      <if type="chapter paper-conference">
+        <text variable="container-title" font-style="italic"/>
+      </if>
+      <else-if type="article-journal article-magazine article-newspaper review review-book">
+        <text variable="container-title" font-style="italic"/>
+      </else-if>
+    </choose>
+  </macro>
+
+  <macro name="editor">
+    <names variable="editor">
+      <name and="text" delimiter=", " delimiter-precedes-last="always"
+            initialize="false"/>
+      <label form="short" prefix=", "/>
+    </names>
+  </macro>
+
+  <!-- Full note. This macro is deliberately independent of citation position:
+       the same bibliographic data is rendered on every occurrence. -->
+  <macro name="full-note">
+    <choose>
+
+      <!-- BOOK / REPORT / THESIS / PAMPHLET / ETC. -->
+      <if match="any" type="book report thesis pamphlet graphic manuscript">
+        <group delimiter=", ">
+          <text macro="author-note"/>
+          <text macro="title"/>
+          <text macro="book-source"/>
+        </group>
+      </if>
+
+      <!-- CHAPTER / CONFERENCE PAPER -->
+      <else-if match="any" type="chapter paper-conference">
+        <group delimiter=", ">
+          <text macro="author-note"/>
+          <text macro="title"/>
+          <group delimiter=" ">
+            <text term="in" text-case="lowercase"/>
+            <text macro="container-title"/>
+          </group>
+          <text macro="editor"/>
+          <text macro="book-source"/>
+        </group>
+      </else-if>
+
+      <!-- JOURNAL / MAGAZINE / NEWSPAPER ARTICLE -->
+      <else-if match="any" type="article-journal article-magazine article-newspaper">
+        <group delimiter=", ">
+          <text macro="author-note"/>
+          <text macro="title"/>
+          <text macro="container-title"/>
+          <group delimiter=" ">
+            <text variable="volume"/>
+            <text variable="issue" prefix="(" suffix=")"/>
+          </group>
+          <date variable="issued" prefix="(" suffix=")">
+            <date-part name="year"/>
+          </date>
+        </group>
+      </else-if>
+
+      <!-- WEBPAGE -->
+      <else-if type="webpage post-weblog">
+        <group delimiter=", ">
+          <text macro="author-note"/>
+          <text macro="title"/>
+          <text variable="container-title" font-style="italic"/>
+          <text macro="access"/>
+        </group>
+      </else-if>
+
+      <!-- FALLBACK -->
+      <else>
+        <group delimiter=", ">
+          <text macro="author-note"/>
+          <text macro="title"/>
+          <text macro="book-source"/>
+          <text macro="access"/>
+        </group>
+      </else>
+
+    </choose>
+  </macro>
+
+  <!-- IMPORTANT: no position="subsequent" branch.
+       Every citation receives the same full-note bibliographic treatment. -->
+  <citation disambiguate-add-givenname="true" disambiguate-add-names="true">
+    <layout suffix=".">
+      <group delimiter=", ">
+        <text macro="full-note"/>
+        <text macro="locator"/>
+      </group>
+    </layout>
+  </citation>
+
+  <bibliography hanging-indent="true">
+    <sort>
+      <key macro="author-bib"/>
+      <key variable="title"/>
+      <key variable="issued"/>
+    </sort>
+    <layout suffix=".">
+      <choose>
+        <if match="any" type="chapter paper-conference">
+          <group delimiter=", ">
+            <text macro="author-bib"/>
+            <text macro="title"/>
+            <group delimiter=" ">
+              <text term="in" text-case="lowercase"/>
+              <text macro="container-title"/>
+            </group>
+            <text macro="editor"/>
+            <text macro="book-source"/>
+          </group>
+        </if>
+        <else>
+          <group delimiter=", ">
+            <text macro="author-bib"/>
+            <text macro="title"/>
+            <text macro="book-source"/>
+            <text macro="access"/>
+          </group>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>
